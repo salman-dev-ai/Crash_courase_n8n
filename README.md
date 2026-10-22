@@ -8,9 +8,7 @@ An advanced automation workflow built with **n8n** that collects the latest Arti
 
 ![NewsAI Architecture Banner](./projectn8n1.jpg)
 
-> **Banner Generation Prompt:**
-> *A professional dark-themed high-tech landscape banner for a GitHub repository titled "NewsAI: Automated AI News Curator & Audio Digest". The image clearly illustrates a modern automation workflow diagram from left to right. On the far left, show input node boxes representing RSS Feeds with tech logos (like TechCrunch and OpenAI). A glowing connecting wire leads into a Filter node labeled "Filter (24h)", then into an Aggregate node, which connects to a central glowing AI brain node labeled "Basic LLM Chain" featuring the Google Gemini logo. From the Gemini node, two output branches emerge: one branch goes upwards to a Telegram icon labeled "Telegram (Text)" showing a clean Markdown chat window preview; the other branch goes downwards through a sound wave node labeled "OpenAI TTS" with vibrant audio waves leading into a headphones/audio icon labeled "Telegram (Audio)". In the bottom right corner, include a sleek avatar tag that says "Developed by salman-dev-ai". Modern neon lighting, glowing circuitry background, ultra-sharp detail, cinematic tech aesthetics, 16:9 aspect ratio.*
-
+ 
 ---
 
 ## 🚀 Key Features
