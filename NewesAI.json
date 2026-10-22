@@ -1,0 +1,443 @@
+{
+  "name": "NewesAI",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "الحقل الأول والثالث هما المعلومات، والحقل الأوسط هو القرار والشرط الذي يربط بينهما.",
+        "height": 80,
+        "color": "#B71A1A"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        80,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "cf1c4f35-7a5d-4984-b00d-ff48a1faf3c3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": " إضافة وقراءة خلاصة الأخبار\n",
+        "height": 80,
+        "width": 150
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -112,
+        -384
+      ],
+      "typeVersion": 1,
+      "id": "8b15865c-5581-43cc-bc19-3dd15819b85f",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        400,
+        -144
+      ],
+      "id": "6d033d81-abd7-4031-966e-05668489614d",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -336,
+        -272
+      ],
+      "id": "fe36c0bf-034c-4554-9724-3d50b0ef76df",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://openai.com/news/rss.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -96,
+        -272
+      ],
+      "id": "a634062a-87af-447f-ad13-9f9103a96831",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "86dccd4f-cfaa-4565-a915-993e21fef735",
+              "leftValue": "={{ $json.isoDate }}",
+              "rightValue": "={{ $now.minus({ days: 1 }).toISO() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        112,
+        -272
+      ],
+      "id": "0bee5f2d-7c0d-405d-864c-951c436f44d5",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -320,
+        -80
+      ],
+      "id": "51ea8a40-28fa-4e42-859d-1dee070cc075",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/feed",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        -96
+      ],
+      "id": "a294f39f-bb55-4862-baae-2787689c0c19",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "86dccd4f-cfaa-4565-a915-993e21fef735",
+              "leftValue": "={{ $json.isoDate }}",
+              "rightValue": "={{ $now.minus({ days: 1 }).toISO() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "afterOrEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        64,
+        -112
+      ],
+      "id": "de98bf64-f5cf-439a-b6fa-821869e69f8a",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "content": "4. تجميع الأخبار في قائمة واحدة",
+        "height": 80,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        336,
+        -288
+      ],
+      "typeVersion": 1,
+      "id": "12de928a-6998-438f-80d9-2b33d3fc6927",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=أنت مجلة تقنية ومقدم بودكاست احترافي. قم بجمع وتلخيص أخبار الذكاء الاصطناعي التالية باللغة العربية.\n\nالأخبار الخام:\n{{ JSON.stringify($json.all_news) }}\n\nالشروط:\n1. صاغ النشرة بأسلوب سلس وممتع يجمع بين القراءة المريحة والإلقاء الصوتي المباشر.\n2. اختر أهم 3 إلى 5 أخبار فقط.\n3. لكـل خبر: ذكر العنوان، ماذا حدث (في جملتين)، ولماذا هذا المهم.\n4. استخدم لغة عربية فصحى بسيطة وسليمة تماماً لتسهيل النطق الصوتي.\n5. تجنب استخدام الرموز المعقدة أو الجداول أو الروابط داخل جسم الخبر كي لا تشوش على محول الصوت.\n\nالتنسيق المطلوب:\n# 🤖 موجز أخبار الذكاء الاصطناعي اليومي\n\n• [العنوان الأول]\n- التفاصيل: (الشرح)\n- الأهمية: (تأثير الخبر)\n\n• [العنوان الثاني]\n- التفاصيل: (الشرح)\n- الأهمية: (تأثير الخبر)\n\n💡 الملخص التنفيذي: (خاتمة قصيرة من جملتين)",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        624,
+        -160
+      ],
+      "id": "b1b9bca4-be85-4162-8b23-b28bdf9ba69c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        48
+      ],
+      "id": "1816037c-e81a-47d6-95c1-0f73d3e10bcf",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Large Language Model ",
+        "height": 80,
+        "width": 150,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        -272
+      ],
+      "typeVersion": 1,
+      "id": "8edb0e1e-37c2-4d5c-9bf3-42d424535ce7",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "chatId": "5787027252",
+        "text": "={{ $json.text }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        -384
+      ],
+      "id": "0428adbb-78a5-464d-b0da-a98ad7037ac8",
+      "name": "Send a text message",
+      "webhookId": "705dd351-f6df-4793-8bc9-e630f8bcd3c8",
+      "credentials": {
+        "telegramApi": {
+          "id": "Il60AQj88KCc1bmw",
+          "name": "Telegram account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "input": "={{ $json.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        -160
+      ],
+      "id": "83785a9f-cd20-40f4-be84-649fefa5a6f0",
+      "name": "Generate audio",
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "5787027252",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "🎙️ الاستماع إلى الملخص الصوتي للنشرة"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1104,
+        -160
+      ],
+      "id": "e281e87e-d9dd-4229-881d-6a522fd77e00",
+      "name": "Send an audio file",
+      "webhookId": "edd457a3-6ead-45ea-b047-2644a8e82971",
+      "credentials": {
+        "telegramApi": {
+          "id": "Il60AQj88KCc1bmw",
+          "name": "Telegram account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generate audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate audio": {
+      "main": [
+        [
+          {
+            "node": "Send an audio file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "0d09c7a4-261f-4db5-86c1-d71ef1599f81",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "66313f5ba423c03e6c8db2ff089c334b1d8e9a84db087616abe044cfca95396c"
+  },
+  "nodeGroups": [],
+  "id": "zxSKxRj1VM9WbqIt",
+  "tags": []
+}
