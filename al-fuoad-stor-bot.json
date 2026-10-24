@@ -1,0 +1,463 @@
+{
+  "name": "الفؤاد ستور - بوت الرد على العملاء",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "a5611b37-1358-43eb-b124-cc3da830aa90",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -64,
+        32
+      ],
+      "webhookId": "3cfadd72-39df-4397-806a-17ce208fc08e",
+      "credentials": {
+        "telegramApi": {
+          "id": "xHjKpWVwqWhlniLM",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "ITLYLowjedxfR9nk",
+          "cachedResultName": "alfouad_store_info"
+        },
+        "returnAll": true
+      },
+      "id": "2898f74c-07ac-4eb9-9319-5fe3d17ce76c",
+      "name": "Get Store Info",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        32
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "e8e117a1-e8be-437f-9d0c-c42d4f0c005f",
+      "name": "Aggregate Store Info",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        432,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "XPcjAc0APERo4ul8",
+          "cachedResultName": "alfouad_clothes"
+        },
+        "returnAll": true
+      },
+      "id": "99c68c7e-1a7e-4583-b4d2-fc564464937a",
+      "name": "Get Clothes",
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        656,
+        32
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "7210a7ec-0b08-4eec-8a9a-816d93669b11",
+      "name": "Aggregate Clothes",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        960,
+        32
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').first().json.message.text }}",
+        "options": {
+          "systemMessage": "=أنت مساعد مبيعات ودود لمحل \"الفؤاد ستور\" لبيع ملابس الأطفال. تتحدث مع العملاء عبر تيليجرام.\n\nقواعد الرد:\n- رُد بلهجة مهذبة وبسيطة وباختصار، وبنفس لغة العميل (العربية غالباً).\n- اعتمد فقط على المعلومات أدناه. لا تخترع منتجات أو أسعاراً أو سياسات.\n- إذا سأل العميل عن شيء غير موجود هنا (مثل منتج أو مقاس أو توفر غير مذكور)، لا تخمّن: استخدم أداة ask_admin لإرسال سؤاله للإدارة، ثم أخبر العميل بأدب أنك حوّلت سؤاله للإدارة وسيصله الرد هنا قريباً.\n- اكتب في أداة ask_admin سؤال العميل بوضوح وباختصار.\n- اذكر الأسعار دائماً بالريال اليمني.\n\nمعلومات المحل (من قاعدة البيانات، وهي المرجع الوحيد):\n{{ $('Aggregate Store Info').first().json.data.map(r => '- [' + r.section + '] ' + r.title + ': ' + r.details + (r.price ? ' | السعر: ' + r.price : '')).join('\\n') }}\n\nالملابس المتوفرة (من قاعدة البيانات، وهي المرجع الوحيد؛ الصنف المكتوب عليه \"غير متوفر حالياً\" لا تعرضه كمتاح):\n{{ $('Aggregate Clothes').first().json.data.map(r => '- ' + r.name + ' | المقاسات: ' + r.sizes + ' | الخامة: ' + r.material + (r.colors ? ' | الألوان: ' + r.colors : '') + ' | السعر: ' + r.price + (r.available === 'لا' ? ' | (غير متوفر حالياً)' : '')).join('\\n') }}",
+          "enableStreaming": false
+        }
+      },
+      "id": "2df4a7c0-d34f-4aa6-8ced-2d436b7a62b3",
+      "name": "Store Assistant",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1168,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-6-luna",
+          "cachedResultName": "gpt-6-luna"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "a6809383-f8ba-4927-82f6-a7a5a1900b33",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1136,
+        272
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": null,
+          "name": "Gateway credits",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "9ad6b545-d376-4f75-8367-9a58c9508459",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1264,
+        288
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "5787027252",
+        "text": "=❓ سؤال من عميل:\n{{ $fromAI(\"question\", \"سؤال العميل الذي لا توجد إجابته في بيانات المحل\", \"string\") }}\n\nرقم العميل: {{ $('Telegram Trigger').item.json.message.chat.id }}\n\n↩️ اضغط Reply على هذه الرسالة واكتب ردك ليصل للعميل.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "03529835-0078-4d79-910a-bf96832be297",
+      "name": "ask_admin",
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        1536,
+        224
+      ],
+      "webhookId": "ae33ec7e-e981-479f-b53c-472e15394a6b",
+      "credentials": {
+        "telegramApi": {
+          "id": "ivtTgPjdI9Vu0WHP",
+          "name": "Telegram Admin Bot 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "f7324176-41e3-481a-8c5f-3d5e5e6653cc",
+      "name": "Send Reply",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1808,
+        112
+      ],
+      "webhookId": "70ffe661-34d4-42cc-b52d-a74824817961",
+      "credentials": {
+        "telegramApi": {
+          "id": "xHjKpWVwqWhlniLM",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "348bd05c-1408-44cc-a542-90ca74e06ffa",
+      "name": "Admin Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        128,
+        -224
+      ],
+      "webhookId": "cb81bd30-7c13-4368-baa9-910643f726e8",
+      "credentials": {
+        "telegramApi": {
+          "id": "ivtTgPjdI9Vu0WHP",
+          "name": "Telegram Admin Bot 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cid",
+              "name": "customerId",
+              "type": "string",
+              "value": "={{ (($json.message.reply_to_message && $json.message.reply_to_message.text) || \"\").match(/رقم العميل: (\\d+)/)?.[1] || \"\" }}"
+            },
+            {
+              "id": "ans",
+              "name": "answer",
+              "type": "string",
+              "value": "={{ $json.message.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "14b2b861-74ee-4dc0-b285-063c6b8e3b29",
+      "name": "Extract Customer ID",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        352,
+        -224
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has",
+              "leftValue": "={{ $json.customerId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b5198f49-f524-4ae7-914f-b83b5d2ff87c",
+      "name": "Is Reply To Question",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        -224
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.customerId }}",
+        "text": "={{ $json.answer }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b42d10b2-56ca-4c33-9a61-fe4ad1b7e1a9",
+      "name": "Send Admin Answer",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1136,
+        -192
+      ],
+      "webhookId": "48714503-17c2-422a-b0e5-517e75288b14",
+      "credentials": {
+        "telegramApi": {
+          "id": "xHjKpWVwqWhlniLM",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Store Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Store Info": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Store Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Store Info": {
+      "main": [
+        [
+          {
+            "node": "Get Clothes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Clothes": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Clothes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Clothes": {
+      "main": [
+        [
+          {
+            "node": "Store Assistant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Assistant": {
+      "main": [
+        [
+          {
+            "node": "Send Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Store Assistant",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Store Assistant",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ask_admin": {
+      "ai_tool": [
+        [
+          {
+            "node": "Store Assistant",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Admin Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Extract Customer ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Customer ID": {
+      "main": [
+        [
+          {
+            "node": "Is Reply To Question",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Reply To Question": {
+      "main": [
+        [
+          {
+            "node": "Send Admin Answer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "afb5f213-1fe2-42d4-98a1-add6161b5c1a",
+  "meta": {
+    "instanceId": "cb805cfb523a38a1f55984ec1c3a0c84a3f8a330875dda44aeb3896251e278c0"
+  },
+  "nodeGroups": [],
+  "id": "i7jUXIpPx6cCyBGl",
+  "tags": []
+}
