@@ -5,7 +5,7 @@ An advanced automation workflow built with **n8n** that collects the latest Arti
 ---
 
 ## 🖼️ Workflow Banner
-![n8n Architecture Banner](./n8n_projects.png)
+![n8n Architecture Banner](./n8n_projets.png)
 ![NewsAI Architecture Banner](./projectn8n1.jpg)
 
  
