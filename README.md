@@ -79,7 +79,7 @@ git clone [https://github.com/salman-dev-ai/n8n-ai-news-summarizer-telegram.git]
 
 * **Salman Al-Ansi**
 * **Portfolio:** [salman-al-ansi.vercel.app](https://portfolio-en-salman-32c9.vercel.app/)
-* **GitHub Repository:** [salman-dev-ai/n8n-ai-news-summarizer-telegram](https://github.com/salman-dev-ai/n8n-ai-news-summarizer-telegram)
+* **GitHub Repository:** [salman-dev-ai/crash_course_n8n](https://github.com/salman-dev-ai/n8n-ai-news-summarizer-telegram)
 
 *Let's connect and build amazing automations!*
 
