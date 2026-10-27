@@ -1,0 +1,179 @@
+{
+  "name": "ملخص الايملات",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -384,
+        16
+      ],
+      "id": "4c564bd1-fcdf-4ea0-a797-2e3d03822d37",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "filters": {
+          "q": "newer_than:1d",
+          "readStatus": "both"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        32
+      ],
+      "id": "25f36bcb-2eb6-41bd-9ace-8d1ccc52ea4b",
+      "name": "Get many messages",
+      "webhookId": "e8bd1319-efd5-46d4-8b29-f4c79f0ea465",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "PbeQC1VvkTFJpzgk",
+          "name": "Gmail account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=هذه رسائل البريد خلال آخر 24 ساعة:\n\n{{ $input.all().filter(i => i.json.Subject || i.json.snippet).map((i, n) => (n + 1) + \") من: \" + (i.json.From || \"\") + \"\\nالموضوع: \" + (i.json.Subject || \"\") + \"\\nالمحتوى: \" + (i.json.snippet || \"\")).join(\"\\n\\n\") || \"لا توجد رسائل جديدة.\" }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "أنت مساعد لطالب جامعي. لخّص رسائل البريد بالعربية في رسالة قصيرة واضحة. ابدأ بالأهم: بعدها اذكر باختصار باقي الرسائل المهمة، وتجاهل الإعلانات التجارية والرسائل غير المهمة. استخدم نقاطاً بسيطة. للتنسيق استخدم فقط وسم <b> للعناوين ولا تستخدم Markdown أو أي وسوم HTML أخرى. إذا لم توجد رسائل قل ذلك في جملة واحدة."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        112,
+        48
+      ],
+      "id": "99c2383e-f965-475d-bb08-06de4833005c",
+      "name": "Basic LLM Chain",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        336
+      ],
+      "id": "3f6d7069-1d93-4b0a-b117-d5de38d2c237",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "5787027252",
+        "text": "=<b>ملخص بريد اليوم</b>  {{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        368,
+        48
+      ],
+      "id": "d73a5a14-b269-4892-86e2-dc7aa9c770ec",
+      "name": "Send a text message",
+      "webhookId": "ca2f3295-12f1-4451-bab8-8f08d6b793cc",
+      "credentials": {
+        "telegramApi": {
+          "id": "ZPVl3cvZI0IsbeMk",
+          "name": "sumriz_email"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get many messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many messages": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d213f808-8b79-4fff-bb48-c6da5885a665",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "66313f5ba423c03e6c8db2ff089c334b1d8e9a84db087616abe044cfca95396c"
+  },
+  "nodeGroups": [],
+  "id": "UM04J5sPpGok3MAj",
+  "tags": []
+}
